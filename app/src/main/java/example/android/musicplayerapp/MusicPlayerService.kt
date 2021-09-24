@@ -8,17 +8,12 @@ import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Binder
-import android.os.Handler
 import android.os.IBinder
-import android.widget.Toast
 
 class MusicPlayerService : Service() {
 
 
     val metadataRetrieve = MediaMetadataRetriever()
-    lateinit var albumName: String
-    lateinit var albumImage: Bitmap
-
 
     lateinit var songPlayer: MediaPlayer
     val songs = ArrayList<Song>()
@@ -33,20 +28,19 @@ class MusicPlayerService : Service() {
         fun getService() : MusicPlayerService{ return this@MusicPlayerService }
     }
 
-    override fun onBind(p0: Intent?): IBinder? {
+    override fun onBind(p0: Intent?): IBinder {
         return musicBinder
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        //ADD THE SONGS TO THE LIST AND START THE MEDIA PLAYER WITH THE FIRST SONG
-        songs.add(Song(R.raw.song1, ("android.resource://"+getPackageName()+"/"+R.raw.song1)))
-        songs.add(Song(R.raw.song2, ("android.resource://"+getPackageName()+"/"+R.raw.song2)))
+        //ADD THE SONGS TO THE LIST AND START THE MEDIA PLAYER WITH THE FIRST SONG)
+        songs.add(createSong(R.raw.song1, ("android.resource://"+getPackageName()+"/"+R.raw.song1)))
+        songs.add(createSong(R.raw.song2, ("android.resource://"+getPackageName()+"/"+R.raw.song2)))
         songPlayer = MediaPlayer.create(this@MusicPlayerService, songs[0].id)
         songPlayer.setOnCompletionListener { nextSong() }
     }
-
 
 
     private fun changeSong(songPlaying: Int){
@@ -55,15 +49,6 @@ class MusicPlayerService : Service() {
         songPlayer = MediaPlayer.create(this@MusicPlayerService, songs[songPlaying].id)
         songPlayer.start()
         isPlaying=true
-    }
-
-    fun getData(): Pair<String, Bitmap>{
-        metadataRetrieve.setDataSource(this@MusicPlayerService, Uri.parse(songs[songPlaying].path))
-        val imageOnBits = metadataRetrieve.embeddedPicture
-        albumImage = BitmapFactory.decodeByteArray(imageOnBits, 0, imageOnBits!!.size)
-        albumName = metadataRetrieve.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM) ?: "Album not found"
-
-        return Pair(albumName, albumImage)
     }
 
     fun playSong(){
@@ -93,4 +78,26 @@ class MusicPlayerService : Service() {
         }
         changeSong(songPlaying)
     }
+
+    fun getSongPlaying(): Song{
+        return songs[songPlaying]
+    }
+
+    private fun createSong(id: Int,path: String): Song{
+        metadataRetrieve.setDataSource(this@MusicPlayerService, Uri.parse(path))
+        val albumName = metadataRetrieve.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM) ?: "Not found"
+        val songName = metadataRetrieve.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE) ?: "Not found"
+        val artistText = metadataRetrieve.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST) ?: "Not found"
+        val durationText = metadataRetrieve.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION) ?: "Not found"
+        val yearText = metadataRetrieve.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR) ?: "Not found"
+
+        return Song(id, path, albumName, songName, artistText, durationText, yearText)
+    }
+
+    fun getImage(): Bitmap{
+        metadataRetrieve.setDataSource(this@MusicPlayerService, Uri.parse(songs[songPlaying].path))
+        val imageOnBits = metadataRetrieve.embeddedPicture
+        return BitmapFactory.decodeByteArray(imageOnBits, 0, imageOnBits!!.size)
+    }
+
 }

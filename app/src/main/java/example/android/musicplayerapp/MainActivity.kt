@@ -10,8 +10,6 @@ import android.os.IBinder
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import java.io.*
 
 class MainActivity : AppCompatActivity() {
@@ -35,12 +33,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val songName: TextView = findViewById<TextView>(R.id.albumTextMain)
-        val albumArt: ImageView = findViewById<ImageView>(R.id.albumImage)
 
-
-        //We bind to the service
-        var myIntent = Intent(this@MainActivity, MusicPlayerService::class.java)
+        //Bind to the service
+        val myIntent = Intent(this@MainActivity, MusicPlayerService::class.java)
         startService(myIntent)
 
         myIntent.also {
@@ -53,33 +48,37 @@ class MainActivity : AppCompatActivity() {
 
         val nextButton = findViewById<ImageButton>(R.id.nextButton)
         val prevButton = findViewById<ImageButton>(R.id.prevButton)
-        val songName: TextView = findViewById<TextView>(R.id.albumTextMain)
-        val albumArt: ImageView = findViewById<ImageView>(R.id.albumImage)
+        val songText: TextView = findViewById<TextView>(R.id.albumTextMain)
+        val albumImage: ImageView = findViewById<ImageView>(R.id.albumImage)
         val playButton: ImageButton = findViewById<ImageButton>(R.id.playButton)
-        val mainLayout = findViewById<ConstraintLayout>(R.id.mainLayout)
 
 
         playButton.setOnClickListener {
-            songName.text = musicService.getData().first
-            albumArt.setImageBitmap(musicService.getData().second)
             musicService.playSong()
+            val title = musicService.getSongPlaying().artistText+" - "+musicService.getSongPlaying().songText
+            songText.text = title
+            albumImage.setImageBitmap(musicService.getImage())
         }
 
         nextButton.setOnClickListener{
             musicService.nextSong()
-            songName.text = musicService.getData().first
-            albumArt.setImageBitmap(musicService.getData().second)
-
+            val title = musicService.getSongPlaying().artistText+" - "+musicService.getSongPlaying().songText
+            songText.text = title
+            albumImage.setImageBitmap(musicService.getImage())
         }
         prevButton.setOnClickListener{
             musicService.previousSong()
-            songName.text = musicService.getData().first
-            albumArt.setImageBitmap(musicService.getData().second)
+            val title = musicService.getSongPlaying().artistText+" - "+musicService.getSongPlaying().songText
+            songText.text = title
+            albumImage.setImageBitmap(musicService.getImage())
         }
 
-        if(serviceBounded){
-            songName.text = musicService.getData().first
-            albumArt.setImageBitmap(musicService.getData().second)
+
+        albumImage.setOnClickListener {
+            val intentToDetails = Intent(this,DetailsActivity::class.java)
+            intentToDetails.putExtra("song", musicService.getSongPlaying())
+            startActivity(intentToDetails)
         }
+
     }
 }
