@@ -1,6 +1,7 @@
 package example.android.musicplayerapp
 
-import android.app.Service
+import android.app.*
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -8,7 +9,10 @@ import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
+import android.widget.Toast
+import androidx.core.app.NotificationCompat
 
 class MusicPlayerService : Service() {
 
@@ -32,22 +36,34 @@ class MusicPlayerService : Service() {
         return musicBinder
     }
 
+    override fun onUnbind(intent: Intent?): Boolean {
+        return false
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_STICKY
+    }
+
+
     override fun onCreate() {
         super.onCreate()
 
         //ADD THE SONGS TO THE LIST AND START THE MEDIA PLAYER WITH THE FIRST SONG)
         songs.add(createSong(R.raw.song1, ("android.resource://"+getPackageName()+"/"+R.raw.song1)))
         songs.add(createSong(R.raw.song2, ("android.resource://"+getPackageName()+"/"+R.raw.song2)))
+        songs.add(createSong(R.raw.song3, ("android.resource://"+getPackageName()+"/"+R.raw.song3)))
         songPlayer = MediaPlayer.create(this@MusicPlayerService, songs[0].id)
-        songPlayer.setOnCompletionListener { nextSong() }
+
     }
 
 
     private fun changeSong(songPlaying: Int){
         songPlayer.stop()
         songPlayer.reset()
-        songPlayer = MediaPlayer.create(this@MusicPlayerService, songs[songPlaying].id)
+        songPlayer.setDataSource(this@MusicPlayerService, Uri.parse(songs[songPlaying].path))
+        songPlayer.prepare()
         songPlayer.start()
+        songPlayer.isLooping = true
         isPlaying=true
     }
 
@@ -94,10 +110,13 @@ class MusicPlayerService : Service() {
         return Song(id, path, albumName, songName, artistText, durationText, yearText)
     }
 
-    fun getImage(): Bitmap{
+    fun getImage(): Bitmap?{
         metadataRetrieve.setDataSource(this@MusicPlayerService, Uri.parse(songs[songPlaying].path))
         val imageOnBits = metadataRetrieve.embeddedPicture
-        return BitmapFactory.decodeByteArray(imageOnBits, 0, imageOnBits!!.size)
+        if(imageOnBits != null){
+            return BitmapFactory.decodeByteArray(imageOnBits, 0, imageOnBits.size)
+        }
+        return null
     }
 
 }
