@@ -25,7 +25,15 @@
             android:parentActivityName=".MainActivity">
         </activity>
 
-        <service android:name=".MusicPlayerService" />
+        <receiver android:name=".NotificationReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.NEXT" />
+                <action android:name="NEXT"></action>
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".MusicPlayerService"></service>
+
     </application>
 
 </manifest>

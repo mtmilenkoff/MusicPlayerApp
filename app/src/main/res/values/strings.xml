@@ -3,10 +3,11 @@
     <string name="play_button">Play</string>
     <string name="previous_button">Previous</string>
     <string name="next_button">Next</string>
-    <string name="artist">Artist :</string>
-    <string name="song">Song :</string>
-    <string name="album">Album :</string>
+    <string name="artist">Artist : </string>
+    <string name="song">Song : </string>
+    <string name="album">Album : </string>
     <string name="unknown">Unknown</string>
-    <string name="year">Year :</string>
-    <string name="duration">Duration :</string>
+    <string name="year">Year : </string>
+    <string name="duration">Duration : </string>
+    <string name="welcome">Welcome!</string>
 </resources>
