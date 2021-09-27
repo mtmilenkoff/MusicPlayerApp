@@ -1,8 +1,6 @@
 package example.android.musicplayerapp
 
 import android.content.*
-import android.os.IBinder
-import androidx.appcompat.app.AppCompatActivity
 
 class NotificationReceiver: BroadcastReceiver() {
 

@@ -1,23 +1,16 @@
 package example.android.musicplayerapp
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.app.NotificationCompat
 import java.io.*
-import android.content.BroadcastReceiver
 
 
 
@@ -39,7 +32,6 @@ class MainActivity : AppCompatActivity() {
             serviceBounded = true
             updateUI()
         }
-
         override fun onServiceDisconnected(p0: ComponentName?) {
             serviceBounded = false
         }
@@ -49,7 +41,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         val myIntent = Intent(this@MainActivity, MusicPlayerService::class.java)
         //Start service

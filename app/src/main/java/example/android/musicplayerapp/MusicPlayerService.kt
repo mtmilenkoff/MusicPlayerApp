@@ -11,7 +11,6 @@ import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 
 class MusicPlayerService : Service() {
@@ -79,9 +78,7 @@ class MusicPlayerService : Service() {
             .setContentTitle("Music Player")
             .setContentText("Song")
             .build()
-
         notiManager.notify(0,notification)
-
     }
 
 
@@ -92,9 +89,7 @@ class MusicPlayerService : Service() {
         songPlayer.setDataSource(this@MusicPlayerService, Uri.parse(songs[songPlaying].path))
         songPlayer.prepare()
         songPlayer.start()
-        songPlayer.setOnCompletionListener(){
-            nextSong()
-        }
+        songPlayer.setOnCompletionListener { nextSong() }
         isPlaying=true
     }
 

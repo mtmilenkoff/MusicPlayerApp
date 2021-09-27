@@ -12,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicPlayerApp">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -21,18 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".DetailsActivity"
             android:parentActivityName=".MainActivity">
         </activity>
 
-        <receiver android:name=".NotificationReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.NEXT" />
-                <action android:name="NEXT"></action>
-            </intent-filter>
-        </receiver>
+        <receiver android:name=".NotificationReceiver"/>
 
-        <service android:name=".MusicPlayerService"></service>
+        <service android:name=".MusicPlayerService"/>
 
     </application>
 

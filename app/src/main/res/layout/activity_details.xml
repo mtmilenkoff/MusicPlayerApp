@@ -67,9 +67,8 @@
         android:textSize="16sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/labelYear"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/labelYear">
-    </TextView>
+        app:layout_constraintHorizontal_bias="0.03"
+        app:layout_constraintStart_toEndOf="@+id/labelYear" />
 
     <TextView
         android:id="@+id/durationTextDetails"
