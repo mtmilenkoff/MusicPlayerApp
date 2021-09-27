@@ -53,7 +53,37 @@ class MusicPlayerService : Service() {
         songs.add(createSong(R.raw.song3, ("android.resource://"+getPackageName()+"/"+R.raw.song3)))
         songPlayer = MediaPlayer.create(this@MusicPlayerService, songs[0].id)
 
+
+        val notiManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val openIntent = Intent(this, MainActivity::class.java)
+        val openPendingIntent = PendingIntent.getActivity(this, 0, openIntent, 0)
+
+        val playIntent = Intent(this, NotificationReceiver::class.java).also{ it.action = "ACTION_PLAY" }
+        val playPendingIntent = PendingIntent.getBroadcast(this,0,playIntent,0)
+
+        val nextIntent = Intent(this, NotificationReceiver::class.java).also{ it.action = "ACTION_NEXT" }
+        val nextPendingIntent = PendingIntent.getBroadcast(this,0,nextIntent,0)
+
+        val previousIntent = Intent(this, NotificationReceiver::class.java).also{ it.action = "ACTION_PREV" }
+        val previousPendingIntent = PendingIntent.getBroadcast(this,0,previousIntent,0)
+
+        createNotificationChannel()
+        val notification = NotificationCompat.Builder(this, "musicplayerid")
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setSmallIcon(R.drawable.download)
+            .setContentIntent(openPendingIntent)
+            .addAction(R.drawable.previous, "", previousPendingIntent)
+            .addAction(R.drawable.play, "", playPendingIntent)
+            .addAction(R.drawable.next, "", nextPendingIntent)
+            .setContentTitle("Music Player")
+            .setContentText("Song")
+            .build()
+
+        notiManager.notify(0,notification)
+
     }
+
 
 
     private fun changeSong(songPlaying: Int){
@@ -120,4 +150,20 @@ class MusicPlayerService : Service() {
         return null
     }
 
+    fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "player"
+            val descriptionText = "player description"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("musicplayerid", name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
 }
